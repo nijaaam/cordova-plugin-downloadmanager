@@ -23,13 +23,16 @@ public class DownloadManager extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("download")) {
             String message = args.getString(0);
-            this.startDownload(message, callbackContext);
+            String title = args.getString(1);
+            String description = args.getString(2);
+            String path = args.getString(3);
+            this.startDownload(message, title, description, path, callbackContext);
             return true;
         }
         return false;
     }
 
-    private void startDownload(String message, CallbackContext callbackContext) {
+    private void startDownload(String message, String title, String description, String path, CallbackContext callbackContext) {
         if (message != null && message.length() > 0) {
             String filename = message.substring(message.lastIndexOf("/")+1, message.length());
             try {
@@ -38,7 +41,7 @@ public class DownloadManager extends CordovaPlugin {
 
                 callbackContext.error("Error in converting filename");
             }
-            android.app.DownloadManager downloadManager = (android.app.DownloadManager) cordova.getActivity().getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);            
+            android.app.DownloadManager downloadManager = (android.app.DownloadManager) cordova.getActivity().getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
             Uri Download_Uri = Uri.parse(message);
             android.app.DownloadManager.Request request = new android.app.DownloadManager.Request(Download_Uri);
             //Restrict the types of networks over which this download may proceed.
@@ -46,11 +49,11 @@ public class DownloadManager extends CordovaPlugin {
             //Set whether this download may proceed over a roaming connection.
             request.setAllowedOverRoaming(false);
             //Set the title of this download, to be displayed in notifications (if enabled).
-            request.setTitle(filename);
+            request.setTitle(title);
             //Set a description of this download, to be displayed in notifications (if enabled)
-            request.setDescription("DataSync File Download.");
-            //Set the local destination for the downloaded file to a path within the application's external files directory            
-            request.setDestinationInExternalFilesDir(cordova.getActivity().getApplicationContext(), Environment.DIRECTORY_DOWNLOADS, filename);
+            request.setDescription(description);
+            //Set the local destination for the downloaded file to a path within the application's external files directory
+            request.setDestinationInExternalPublicDir(path, filename);
             //Set visiblity after download is complete
             request.setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             long downloadReference = downloadManager.enqueue(request);
