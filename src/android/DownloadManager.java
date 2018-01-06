@@ -34,13 +34,6 @@ public class DownloadManager extends CordovaPlugin {
 
     private void startDownload(String message, String title, String description, String path, CallbackContext callbackContext) {
         if (message != null && message.length() > 0) {
-            String filename = message.substring(message.lastIndexOf("/")+1, message.length());
-            try {
-                filename = URLDecoder.decode(filename,"UTF-8");
-            } catch (UnsupportedEncodingException e) {
-
-                callbackContext.error("Error in converting filename");
-            }
             android.app.DownloadManager downloadManager = (android.app.DownloadManager) cordova.getActivity().getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
             Uri Download_Uri = Uri.parse(message);
             android.app.DownloadManager.Request request = new android.app.DownloadManager.Request(Download_Uri);
@@ -53,7 +46,7 @@ public class DownloadManager extends CordovaPlugin {
             //Set a description of this download, to be displayed in notifications (if enabled)
             request.setDescription(description);
             //Set the local destination for the downloaded file to a path within the application's external files directory
-            request.setDestinationInExternalPublicDir(path, filename);
+            request.setDestinationInExternalPublicDir(path, title);
             //Set visiblity after download is complete
             request.setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             long downloadReference = downloadManager.enqueue(request);
