@@ -46,7 +46,8 @@ public class DownloadManager extends CordovaPlugin {
             //Set a description of this download, to be displayed in notifications (if enabled)
             request.setDescription(description);
             //Set the local destination for the downloaded file to a path within the application's external files directory
-            request.setDestinationInExternalPublicDir(path, title + '.mp3');
+            String filename = title + ".mp3";
+            request.setDestinationInExternalPublicDir(path, filename);
             //Set visiblity after download is complete
             request.setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             long downloadReference = downloadManager.enqueue(request);
